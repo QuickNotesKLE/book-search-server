@@ -1,0 +1,302 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif; /* Using Poppins font */
+        }
+
+        body {
+            background: #030303;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Search Card Styling */
+        .search-card {
+            background: #111;
+            color: #ffffff;
+            padding: 35px;
+            border-radius: 20px; /* Increased rounding */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            border: 2px solid #1e3a8a;
+            width: 420px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .search-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(30, 58, 138, 0.7); /* Enhanced blue shadow */
+        }
+
+        .search-card h1 {
+            font-size: 2em;
+            color: #1e3a8a;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .search-card label {
+            font-size: 1.1em;
+            color: #ffffff;
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .search-card input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #1e3a8a;
+            border-radius: 10px;
+            background: #222;
+            color: #ffffff;
+            font-size: 1em;
+            margin-bottom: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-card input[type="text"]:focus {
+            border-color: #4169e1;
+        }
+
+        .search-card button {
+            background: #1e3a8a;
+            color: #ffffff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-card button:hover {
+            background: #152c5b;
+            box-shadow: 0 6px 12px rgba(30, 58, 138, 0.4);
+        }
+
+        /* Table Container */
+        .table-container {
+            display: none;
+            width: 90%;
+            max-width: 1200px;
+            margin: 30px auto;
+            background: #111;
+            padding: 30px;
+            border-radius: 20px; /* Rounded corners for table card */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+            border: 2px solid #1e3a8a;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .table-container:hover {
+            box-shadow: 0 12px 24px rgba(30, 58, 138, 0.7); /* Blue shadow on hover */
+        }
+
+        .back-arrow {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5em;
+            color: #1e3a8a;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .back-arrow:hover {
+            color: #4169e1;
+        }
+
+        .table-container h1 {
+            font-size: 2em;
+            color: #1e3a8a;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #111;
+            color: #ffffff;
+            border: 2px solid #1e3a8a;
+            border-radius: 15px; /* Rounded corners for table */
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border: 1px solid #1e3a8a;
+        }
+
+        th {
+            background: #1e3a8a;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        td {
+            color: #b0b0b0;
+            font-weight: 400;
+        }
+
+        .no-books {
+            color: green;
+            font-weight: 500;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1.3em;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .search-card {
+                width: 90%;
+                padding: 25px;
+            }
+
+            .table-container {
+                width: 95%;
+                padding: 20px;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Initial Search Card -->
+    <div class="search-card" id="search-card">
+        <h1>Central Library</h1>
+       
+        <form id="search-form">
+            <label for="title">Enter Book title </label>
+            <input type="text" id="title" placeholder="Ex: C programming" required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container" id="table-container">
+        <span class="back-arrow" id="back-arrow">&#8592;</span>
+        <h1>Search Results</h1>
+        <div id="message" class="no-books"></div>
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Publisher</th>
+                    <th>Edition</th>
+                    <th>Call No.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Table rows will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const form = document.getElementById('search-form');
+        const searchCard = document.getElementById('search-card');
+        const tableContainer = document.getElementById('table-container');
+        const tableBody = document.querySelector('#data-table tbody');
+        const messageDiv = document.getElementById('message');
+        const backArrow = document.getElementById('back-arrow');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const title = document.getElementById('title').value.trim();
+            const formattedTitle = title.replace(/ /g, '+');
+            const url = `https://staff.kletech.ac.in/library/lib/contents/booksearch.inc.php?title=${formattedTitle}&author=&accno=&callno=&status=-1&bookstatus=&Issuedstatus=&bookType=all&task=searchbooks&saveData=Search`;
+
+            try {
+                const response = await fetch(`http://localhost:3000/scrape?url=${encodeURIComponent(url)}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+
+                const data = await response.json();
+
+                searchCard.style.display = 'none';
+                tableContainer.style.display = 'block';
+
+                tableBody.innerHTML = '';
+                messageDiv.textContent = '';
+
+                if (data.message === 'No books found') {
+                    messageDiv.textContent = 'No books found';
+                } else {
+                    messageDiv.textContent = 'Great Your Book is Available in Central Library';
+                    data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        row.forEach(cell => {
+                            const td = document.createElement('td');
+                            td.textContent = cell;
+                            tr.appendChild(td);
+                        });
+                        tableBody.appendChild(tr);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                messageDiv.textContent = 'Failed to fetch data. Please try again.';
+            }
+        });
+
+        // Back arrow functionality
+        backArrow.addEventListener('click', () => {
+            tableContainer.style.display = 'none';
+            searchCard.style.display = 'block';
+            document.getElementById('title').value = ''; // Clear input field
+        });
+    </script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.4.0/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyBo-xhSCA-BCe7076NQFE5gSnR38z9WXWk",
+          authDomain: "library-b1455.firebaseapp.com",
+          projectId: "library-b1455",
+          storageBucket: "library-b1455.firebasestorage.app",
+          messagingSenderId: "722058114631",
+          appId: "1:722058114631:web:6f7052f984cb18dfc82362",
+          measurementId: "G-1RNP0YM4E7"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+      </script>
+</body>
+</html>
